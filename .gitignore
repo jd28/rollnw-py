@@ -1,0 +1,41 @@
+# Build
+build/
+!external/**/build
+build-debug/
+build_debug/
+build-doc/
+vcpkg/
+vcpkg_installed/
+ccache/
+.ccache/
+
+# IDEs
+.vscode/*
+!.vscode/extensions.json
+.clion/
+CMakeLists.txt.user
+.kdev4/
+*.kdev4
+.cache
+
+# bin/
+bin/*
+!bin/.gitkeep
+
+# docs
+**/docs/_build/
+docs/build/
+__pycache__
+venv
+.doc-venv/
+.venv/
+
+# macOS
+.DS_Store
+
+# python
+dist/
+rollnw.egg-info/
+
+# jupyter
+.ipynb_checkpoints

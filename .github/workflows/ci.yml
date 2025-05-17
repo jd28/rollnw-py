@@ -1,0 +1,162 @@
+name: ci
+
+on:
+  push:
+    paths-ignore:
+      - "**.md"
+      - "**.rst"
+      - "**.ipynb"
+      - "docs/**"
+      - ".readthedocs.yaml"
+  pull_request:
+    paths-ignore:
+      - "**.md"
+      - "**.rst"
+      - "**.ipynb"
+      - "docs/**"
+      - ".readthedocs.yaml"
+  release:
+    types:
+      - published
+
+env:
+  buildDir: "${{ github.workspace }}/build/"
+  NWN_ROOT: "${{ github.workspace }}/nwn/"
+  CI_GITHUB_ACTIONS: "1"
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-14, ubuntu-22.04, windows-2019]
+    runs-on: ${{ matrix.os }}
+    name: Build ${{ matrix.os }}
+
+    steps:
+      - name: Get current date
+        if: matrix.os != 'windows-2019'
+        run: |
+          echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+      - name: Get current date
+        if: matrix.os == 'windows-2019'
+        run: |
+          echo "DATE=$(Get-Date -Format yyyy-MM-dd)" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: all - cache ccache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/.ccache/
+          key: ${{ matrix.os }}-ccache-${{ env.DATE }}
+          restore-keys: |
+            ${{ matrix.os }}-ccache-
+
+      # nwn
+      - name: all - cache nwn
+        id: cache-nwn
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/nwn/
+          key: cache-nwn-3e02cddcea5d0ae82111a3038f14aef6c14d05d9
+
+      - name: all - download nwn
+        if: steps.cache-nwn.outputs.cache-hit != 'true'
+        run: |
+          curl https://nwn.beamdog.net/downloads/nwnee-dedicated-8193.34.zip -O
+          unzip nwnee-dedicated-8193.34.zip -d ${{ github.workspace }}/nwn/
+          ls -l ${{ github.workspace }}/nwn/
+
+      - name: setup ccache
+        run: |
+          ccache --set-config=cache_dir=${{ github.workspace }}/.ccache
+          ccache --set-config=max_size=5G
+          ccache --set-config=compression=true
+
+      - name: ccache - setenv
+        if: ${{ runner.os != 'Windows' }}
+        run: |
+          env
+          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+          echo "/usr/lib/ccache:/usr/local/opt/ccache/libexec" >> $GITHUB_PATH
+          HOST_CCACHE_DIR="$(ccache -k cache_dir)"
+          mkdir -p $HOST_CCACHE_DIR
+
+      - name: ccache - setenv
+        if: ${{ runner.os == 'Windows' }}
+        run: |
+          $env:HOST_CCACHE_DIR="$(ccache -k cache_dir)"
+          md $env:HOST_CCACHE_DIR -ea 0
+
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - uses: pypa/cibuildwheel@v2.22
+
+      - name: Verify clean directory
+        run: git diff --exit-code
+        shell: bash
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        with:
+          path: wheelhouse/*.whl
+          name: dist-${{ matrix.os }}
+
+      - name: Download Cache from Docker (linux only)
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          env
+          ccache -s
+          HOST_CCACHE_DIR="$(ccache -k cache_dir)"
+          rm -rf $HOST_CCACHE_DIR
+          mv ./wheelhouse/.ccache $HOST_CCACHE_DIR
+          ls -la $HOST_CCACHE_DIR
+          ccache -s
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: artifact-${{matrix.os}}
+          path: ./wheelhouse/*.whl
+
+      - name: ccache stats
+        run: |
+          ccache -s
+
+  build_sdist:
+    name: Build source distribution
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Build sdist
+        run: pipx run build --sdist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SDist
+          path: dist/*.tar.gz
+
+  upload_pypi:
+    needs: [build, build_sdist]
+    runs-on: ubuntu-22.04
+    if: github.event_name == 'release' && github.event.action == 'published'
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: all
+
+      - name: Merge files
+        run: |
+          mkdir dist
+          mv all/*/* dist/.
+
+      - uses: pypa/gh-action-pypi-publish@v1.12.4
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}

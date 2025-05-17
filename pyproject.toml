@@ -1,0 +1,51 @@
+[project]
+name = "rollnw"
+version = "0.45.0"
+description = "Python bindings for the rollnw library"
+readme = "README.md"
+authors = [
+    { name = "jmd", email = "joshua.m.dean@gmail.com" }
+]
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.cibuildwheel]
+build-frontend = "build"
+skip = "*-win32 *-manylinux_i686 pp* cp36-* cp37-* *-musllinux_*"
+manylinux-x86_64-image = "manylinux_2_28"
+# test-command = "pytest {package}/tests"
+# test-requires = "pytest"
+
+[tool.cibuildwheel.macos]
+archs = "universal2"
+
+[tool.cibuildwheel.macos.environment]
+MACOSX_DEPLOYMENT_TARGET = "13.0"
+CMAKE_OSX_DEPLOYMENT_TARGET = "13.0"
+CMAKE_OSX_ARCHITECTURES = "arm64;x86_64"
+
+[tool.cibuildwheel.linux]
+before-all = [
+  "source {project}/utils/docker_prepare.sh",
+  "rm {project}/build/CMakeCache.txt"
+]
+environment = """
+  CCACHE_DIR=/output/.ccache
+  CCACHE_COMPILERCHECK=content
+"""
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+norecursedirs = [
+  "external/*",
+]
+
+[tool.scikit-build]
+minimum-version = "build-system.requires"
+build-dir = "build/{wheel_tag}"
+
+[build-system]
+requires = ["scikit-build-core>=0.10"]
+build-backend = "scikit_build_core.build"

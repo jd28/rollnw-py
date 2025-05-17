@@ -1,0 +1,6 @@
+[submodule "external/rollnw"]
+	path = external/rollnw
+	url = https://github.com/jd28/rollnw
+[submodule "external/nanobind"]
+	path = external/nanobind
+	url = https://github.com/wjakob/nanobind.git
