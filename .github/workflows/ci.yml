@@ -118,7 +118,7 @@ jobs:
         with:
           submodules: recursive
 
-      - uses: pypa/cibuildwheel@v2.22
+      - uses: pypa/cibuildwheel@v2.23
 
       - name: Verify clean directory
         run: git diff --exit-code
