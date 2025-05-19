@@ -95,6 +95,7 @@ jobs:
 
       - name: setup ccache
         run: |
+          mkdir -p "${{ github.workspace }}/.ccache"
           ccache --set-config=cache_dir=${{ github.workspace }}/.ccache
           ccache --set-config=max_size=5G
           ccache --set-config=compression=true
