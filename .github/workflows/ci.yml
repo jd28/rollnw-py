@@ -20,9 +20,12 @@ on:
       - published
 
 env:
-  buildDir: "${{ github.workspace }}/build/"
   NWN_ROOT: "${{ github.workspace }}/nwn/"
+  SCCACHE_DIR: "${{ github.workspace }}/.sccache/"
+  SCCACHE_CACHE_SIZE: "5G"
+  SCCACHE_CACHE_MULTIARCH: "1"
   CI_GITHUB_ACTIONS: "1"
+  RUSTC_WRAPPER: "sccache"
 
 jobs:
   build:
@@ -36,8 +39,7 @@ jobs:
     steps:
       - name: Get current date
         if: matrix.os != 'windows-2019'
-        run: |
-          echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+        run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
       - name: Get current date
         if: matrix.os == 'windows-2019'
@@ -47,43 +49,30 @@ jobs:
       # Windows dependencies
       - name: windows - install dependencies
         if: matrix.os == 'windows-2019'
-        run: |
-          choco upgrade ccache
+        run: choco install sccache ninja -y
 
       # macOS Dependencies
-      - name: macOS - install dependencies
+      - name: macOS - install sccache
         if: matrix.os == 'macos-14'
         env:
           HOMEBREW_NO_ANALYTICS: "ON"
           HOMEBREW_NO_AUTO_UPDATE: "ON"
-          HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK: "ON"
-          HOMEBREW_NO_INSTALL_CLEANUP: "ON"
-        run: |
-          brew install --force --overwrite pkg-config ccache
+        run: brew install sccache
 
-      # Linux dependencies
-      - name: linux - install gcc
-        if: ${{ runner.os == 'Linux' }}
-        run: |
-          sudo apt update
-          sudo apt install ccache -y
-
-      - name: all - cache ccache
+      - name: all - cache sccache
         uses: actions/cache@v4
         with:
-          path: |
-            ${{ github.workspace }}/.ccache/
-          key: ${{ matrix.os }}-ccache-${{ env.DATE }}
+          path: ${{ env.SCCACHE_DIR }}
+          key: ${{ matrix.os }}-sccache-${{ env.DATE }}
           restore-keys: |
-            ${{ matrix.os }}-ccache-
+            ${{ matrix.os }}-sccache-
 
       # nwn
       - name: all - cache nwn
         id: cache-nwn
         uses: actions/cache@v4
         with:
-          path: |
-            ${{ github.workspace }}/nwn/
+          path: nwn
           key: cache-nwn-3e02cddcea5d0ae82111a3038f14aef6c14d05d9
 
       - name: all - download nwn
@@ -93,31 +82,15 @@ jobs:
           unzip nwnee-dedicated-8193.34.zip -d ${{ github.workspace }}/nwn/
           ls -l ${{ github.workspace }}/nwn/
 
-      - name: setup ccache
-        run: |
-          mkdir -p "${{ github.workspace }}/.ccache"
-          ccache --set-config=cache_dir=${{ github.workspace }}/.ccache
-          ccache --set-config=max_size=5G
-          ccache --set-config=compression=true
-
-      - name: ccache - setenv
-        if: ${{ runner.os != 'Windows' }}
-        run: |
-          env
-          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-          echo "/usr/lib/ccache:/usr/local/opt/ccache/libexec" >> $GITHUB_PATH
-          HOST_CCACHE_DIR="$(ccache -k cache_dir)"
-          mkdir -p $HOST_CCACHE_DIR
-
-      - name: ccache - setenv
-        if: ${{ runner.os == 'Windows' }}
-        run: |
-          $env:HOST_CCACHE_DIR="$(ccache -k cache_dir)"
-          md $env:HOST_CCACHE_DIR -ea 0
-
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Set up MSVC
+        if: matrix.os == 'windows-2019'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
 
       - uses: pypa/cibuildwheel@v2.22
 
@@ -131,20 +104,17 @@ jobs:
           path: wheelhouse/*.whl
           name: dist-${{ matrix.os }}
 
+
       - name: Download Cache from Docker (linux only)
         if: ${{ runner.os == 'Linux' }}
         run: |
           env
-          ccache -s
-          HOST_CCACHE_DIR="$(ccache -k cache_dir)"
-          rm -rf $HOST_CCACHE_DIR
-          mv ./wheelhouse/.ccache $HOST_CCACHE_DIR
-          ls -la $HOST_CCACHE_DIR
-          ccache -s
+          rm -rf "$SCCACHE_DIR"
+          mv ./wheelhouse/.sccache "$SCCACHE_DIR"
 
-      - name: ccache stats
-        run: |
-          ccache -s
+      - name: sccache stats
+        if: ${{ runner.os != 'Linux' }}
+        run: sccache --show-stats || true
 
   build_sdist:
     name: Build source distribution

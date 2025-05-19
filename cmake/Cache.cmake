@@ -4,7 +4,7 @@ if(NOT ENABLE_CACHE)
 endif()
 
 set(CACHE_OPTION
-    "ccache"
+    "sccache"
     CACHE STRING "Compiler cache to be used")
 set(CACHE_OPTION_VALUES "ccache" "sccache")
 set_property(CACHE CACHE_OPTION PROPERTY STRINGS ${CACHE_OPTION_VALUES})
