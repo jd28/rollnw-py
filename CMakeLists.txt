@@ -8,7 +8,7 @@ include(cmake/Sanitizers.cmake)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-option(ROLLNW_PY_BUILD_DOCS "Build documentation" ON)
+option(ROLLNW_PY_BUILD_DOCS "Build documentation" OFF)
 
 find_package(Python 3.10
   REQUIRED COMPONENTS Interpreter Development.Module
