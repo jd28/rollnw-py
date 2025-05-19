@@ -26,8 +26,7 @@ CMAKE_OSX_ARCHITECTURES = "arm64;x86_64"
 
 [tool.cibuildwheel.linux]
 before-all = [
-  "source {project}/utils/docker_prepare.sh",
-  "rm {project}/build/CMakeCache.txt"
+  "source {project}/utils/docker_prepare.sh"
 ]
 environment = """
   CCACHE_DIR=/output/.ccache
