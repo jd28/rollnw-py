@@ -44,6 +44,30 @@ jobs:
         run: |
           echo "DATE=$(Get-Date -Format yyyy-MM-dd)" | Out-File -FilePath $env:GITHUB_ENV -Append
 
+      # Windows dependencies
+      - name: windows - install dependencies
+        if: matrix.os == 'windows-2019'
+        run: |
+          choco upgrade ccache
+
+      # macOS Dependencies
+      - name: macOS - install dependencies
+        if: matrix.os == 'macos-14'
+        env:
+          HOMEBREW_NO_ANALYTICS: "ON"
+          HOMEBREW_NO_AUTO_UPDATE: "ON"
+          HOMEBREW_NO_BOTTLE_SOURCE_FALLBACK: "ON"
+          HOMEBREW_NO_INSTALL_CLEANUP: "ON"
+        run: |
+          brew install --force --overwrite pkg-config ccache
+
+      # Linux dependencies
+      - name: linux - install gcc
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          sudo apt update
+          sudo apt install ccache -y
+
       - name: all - cache ccache
         uses: actions/cache@v4
         with:
