@@ -194,7 +194,7 @@ void init_kernel(nb::module_& kernel)
     init_kernel_strings(kernel);
     init_kernel_twoda_cache(kernel);
 
-    kernel.def("load_module", [](const std::string& path, bool instantiate = true) -> nw::Module* { return nw::kernel::load_module(path, instantiate); }, nb::arg("path"), nb::arg("instantiate") = true, nb::rv_policy::reference);
+    kernel.def("load_module", [](const std::filesystem::path& path, bool instantiate = true) -> nw::Module* { return nw::kernel::load_module(path, instantiate); }, nb::arg("path"), nb::arg("instantiate") = true, nb::rv_policy::reference);
     kernel.def("unload_module", &nw::kernel::unload_module);
 
     kernel.def("start", []() {

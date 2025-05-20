@@ -1,6 +1,7 @@
 import enum
 from enum import auto, IntFlag
 from typing import NewType, Tuple, List, ClassVar, Optional, DefaultDict
+from pathlib import Path
 
 
 # Math ########################################################################
@@ -841,7 +842,7 @@ class Dialog:
         """
 
     @staticmethod
-    def from_file(path: str) -> "Dialog":
+    def from_file(path: str | Path) -> "Dialog":
         """Creates a dialog from a GFF or rollnw JSON file
         """
 
@@ -986,7 +987,7 @@ class Palette:
         pass
 
     @staticmethod
-    def from_file(path: str):
+    def from_file(path: str | Path):
         """Constructs palette from file.  The file can be JSON or Gff.
         """
         pass

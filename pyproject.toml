@@ -14,29 +14,32 @@ build-frontend = "build"
 skip = "*-win32 *-manylinux_i686 pp* cp36-* cp37-* *-musllinux_*"
 build = "cp310-*"
 manylinux-x86_64-image = "manylinux_2_28"
-environment = """
-CMAKE_GENERATOR=Ninja
-"""
-# test-command = "pytest {project}/tests"
-# test-requires = "pytest"
+test-command = "pytest {project}/tests"
+test-requires = "pytest"
+
+[tool.cibuildwheel.windows.environment]
+CMAKE_GENERATOR="Ninja"
+NWN_ROOT="C:/a/rollnw-py/rollnw-py/nwn"
 
 [tool.cibuildwheel.macos]
 archs = "universal2"
 
 [tool.cibuildwheel.macos.environment]
+NWN_ROOT="/Users/runner/work/rollnw-py/rollnw-py/nwn"
 MACOSX_DEPLOYMENT_TARGET = "13.0"
 CMAKE_OSX_DEPLOYMENT_TARGET = "13.0"
 CMAKE_OSX_ARCHITECTURES = "arm64;x86_64"
 
 [tool.cibuildwheel.linux]
 before-all = [
+  "ls -la /project/nwn || true",
   "source {project}/utils/docker_prepare.sh"
 ]
-environment = """
-  SCCACHE_DIR=/output/.sccache
-  NWN_ROOT=/project/nwn
-  SCCACHE_CACHE_SIZE=5G
-"""
+
+[tool.cibuildwheel.linux.environment]
+NWN_ROOT="/project/nwn"
+SCCACHE_DIR="/output/.sccache"
+SCCACHE_CACHE_SIZE="5G"
 
 [tool.isort]
 profile = "black"

@@ -3,6 +3,7 @@ from . import ObjectBase, ObjectHandle, Area, Creature, Door, Encounter, Placeab
 from . import Effect, ResourceType, Image, ResourceData
 
 from typing import Optional, Tuple, List
+from pathlib import Path
 
 # Classes #####################################################################
 ###############################################################################
@@ -200,7 +201,7 @@ class TwoDACache:
     """2da cache
     """
 
-    def get(self, name: str | Resource) -> StaticTwoDA | None:
+    def get(self, name: str) -> StaticTwoDA | None:
         """Gets a cached twoda"""
         pass
 
@@ -213,7 +214,7 @@ def config():
     pass
 
 
-def load_module(path: str, instantiate: bool = True) -> Module:
+def load_module(path:  str | Path, instantiate: bool = True) -> Module:
     """Loads a module
 
     Args:

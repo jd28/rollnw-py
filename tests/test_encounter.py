@@ -1,7 +1,8 @@
 import rollnw
 from rollnw import Encounter
-import json
-import pytest
+import pathlib
+
+TEST_DATA_DIR = pathlib.Path(__file__).parent / "test_data"
 
 
 def test_encounter_default_construct():
@@ -11,5 +12,5 @@ def test_encounter_default_construct():
 
 def test_encounter_gff_construct():
     obj = Encounter.from_file(
-        "tests/test_data/user/development/boundelementallo.ute")
+        TEST_DATA_DIR / "user/development/boundelementallo.ute")
     assert obj.common.resref == "boundelementallo"

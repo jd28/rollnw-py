@@ -3,11 +3,14 @@ from rollnw import Creature, EquipIndex, ObjectType
 from rollnw.nwn1 import *
 import json
 import pytest
+import pathlib
+
+TEST_DATA_DIR = pathlib.Path(__file__).parent / "test_data"
 
 
 @pytest.fixture
 def json_file():
-    with open("tests/test_data/user/development/drorry.utc.json") as f:
+    with open(TEST_DATA_DIR / "user/development/drorry.utc.json") as f:
         return json.load(f)
 
 
@@ -23,12 +26,13 @@ def test_creature_dict_construct(json_file):
 
 
 def test_creature_gff_construct():
-    cre = Creature.from_file("tests/test_data/user/development/nw_chicken.utc")
+    cre = Creature.from_file(
+        TEST_DATA_DIR / "user/development/nw_chicken.utc")
     assert cre.common.resref == "nw_chicken"
 
 
 def test_creature_stats():
-    cre = Creature.from_file("tests/test_data/user/development/drorry.utc")
+    cre = Creature.from_file(TEST_DATA_DIR / "user/development/drorry.utc")
 
     # Abilities
     assert cre.stats.get_ability_score(0) == 18
@@ -51,7 +55,8 @@ def test_creature_stats():
 
 
 def test_creature_scripts():
-    cre = Creature.from_file("tests/test_data/user/development/nw_chicken.utc")
+    cre = Creature.from_file(
+        TEST_DATA_DIR / "user/development/nw_chicken.utc")
     if cre.scripts.on_attacked == "nw_c2_default5":
         cre.scripts.on_attacked = "nw_shakenbake"
 
@@ -60,14 +65,14 @@ def test_creature_scripts():
 
 def test_creature_inventory():
     cre = Creature.from_file(
-        "tests/test_data/user/development/drorry.utc")
+        TEST_DATA_DIR / "user/development/drorry.utc")
     assert cre.inventory.owner == cre
     assert len(cre.inventory) == 5
 
 
 def test_creature_equips():
     cre = Creature.from_file(
-        "tests/test_data/user/development/drorry.utc")
+        TEST_DATA_DIR / "user/development/drorry.utc")
     assert rollnw.nwn1.get_equipped_item(cre, EquipIndex.head) is None
     assert rollnw.nwn1.get_equipped_item(
         cre, EquipIndex.chest).common.resref == "nw_aarcl002"
@@ -75,7 +80,7 @@ def test_creature_equips():
 
 def test_creature_level_stats():
     cre = Creature.from_file(
-        "tests/test_data/user/development/drorry.utc")
+        TEST_DATA_DIR / "user/development/drorry.utc")
 
     assert cre.levels.entries[0].id == 4
     assert cre.levels.entries[0].level == 10
@@ -84,14 +89,14 @@ def test_creature_level_stats():
 
 def test_creature_casting():
     cre = Creature.from_file(
-        "tests/test_data/user/development/wizard_pm.utc")
+        TEST_DATA_DIR / "user/development/wizard_pm.utc")
 
     assert rollnw.nwn1.get_caster_level(cre, 10) == 18  # Wizard
 
 
 def test_objects_kernel_service():
     mod = rollnw.kernel.load_module(
-        "tests/test_data/user/modules/DockerDemo.mod")
+        str(TEST_DATA_DIR / "user/modules/DockerDemo.mod"))
 
     cre = rollnw.kernel.objects().creature('nw_chicken')
     assert cre

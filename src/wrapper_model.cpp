@@ -7,11 +7,12 @@
 
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/filesystem.h>
+#include <nanobind/stl/string.h>
+#include <nanobind/stl/vector.h>
 
 #include <filesystem>
 #include <string>
 #include <utility>
-#include <variant>
 
 namespace nb = nanobind;
 
@@ -334,7 +335,7 @@ void init_model(nb::module_& nw)
         .def_rw("file_dependency", &nw::model::Model::file_dependency);
 
     nb::class_<nw::model::Mdl>(nw, "Mdl")
-        .def_static("from_file", [](const char* path) {
+        .def_static("from_file", [](const std::filesystem::path& path) {
             auto mdl = new nw::model::Mdl{path};
             return mdl;
         })

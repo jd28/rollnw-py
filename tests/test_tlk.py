@@ -1,5 +1,7 @@
-import rollnw
+import pathlib
 from rollnw import Tlk, LanguageID
+
+TEST_DATA_DIR = pathlib.Path(__file__).parent / "test_data"
 
 
 def test_language_id_construct():
@@ -8,7 +10,7 @@ def test_language_id_construct():
 
 
 def test_path_construct():
-    tlk = Tlk("tests/test_data/root/lang/en/data/dialog.tlk")
+    tlk = Tlk(TEST_DATA_DIR / "root/lang/en/data/dialog.tlk")
     assert tlk.language_id() == LanguageID.english
     assert tlk[0] == "Bad Strref"
     assert tlk[3] == "Bards"

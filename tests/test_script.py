@@ -1,6 +1,8 @@
 import rollnw
-
+import pathlib
 from rollnw.script import *
+
+TEST_DATA_DIR = pathlib.Path(__file__).parent / "test_data"
 
 
 def test_script_context():

@@ -1,11 +1,11 @@
-import rollnw
 from rollnw import Dialog, LanguageID
-import json
-import pytest
+import pathlib
+
+TEST_DATA_DIR = pathlib.Path(__file__).parent / "test_data"
 
 
 def test_dialog_gff_construct():
-    dlg = Dialog.from_file("tests/test_data/user/development/alue_ranger.dlg")
+    dlg = Dialog.from_file(TEST_DATA_DIR / "user/development/alue_ranger.dlg")
     assert len(dlg) == 2
     ptr = dlg.add_string("Hello there")
     assert len(dlg) == 3

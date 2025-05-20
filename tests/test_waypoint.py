@@ -1,11 +1,14 @@
 import rollnw
 import json
 import pytest
+import pathlib
+
+TEST_DATA_DIR = pathlib.Path(__file__).parent / "test_data"
 
 
 @pytest.fixture
 def json_file():
-    with open('tests/test_data/user/development/wp_behexit001.utw.json') as f:
+    with open(TEST_DATA_DIR / 'user/development/wp_behexit001.utw.json') as f:
         return json.load(f)
 
 
@@ -22,13 +25,13 @@ def test_waypoint_dict_construct(json_file):
 
 def test_waypoint_gff_construct():
     w = rollnw.Waypoint.from_file(
-        "tests/test_data/user/development/wp_behexit001.utw")
+        TEST_DATA_DIR / "user/development/wp_behexit001.utw")
     assert not w.has_map_note
     assert str(w.common.resref) == 'wp_behexit001'
 
 
 def test_waypoint_json_construct():
     w = rollnw.Waypoint.from_file(
-        "tests/test_data/user/development/wp_behexit001.utw.json")
+        TEST_DATA_DIR / "user/development/wp_behexit001.utw.json")
     assert not w.has_map_note
     assert str(w.common.resref) == 'wp_behexit001'

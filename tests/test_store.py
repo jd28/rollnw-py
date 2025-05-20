@@ -1,7 +1,8 @@
 import rollnw
 from rollnw import Store
-import json
-import pytest
+import pathlib
+
+TEST_DATA_DIR = pathlib.Path(__file__).parent / "test_data"
 
 
 def test_Store_default_construct():
@@ -10,5 +11,5 @@ def test_Store_default_construct():
 
 
 def test_Store_gff_construct():
-    obj = Store.from_file("tests/test_data/user/development/storethief002.utm")
+    obj = Store.from_file(TEST_DATA_DIR / "user/development/storethief002.utm")
     assert obj.common.resref == "storethief002"

@@ -24,7 +24,6 @@ void bind_opaque_types(nb::module_& m)
     nb::bind_vector<std::vector<nw::InventoryItem>>(m, "InventoryItemVector");
     nb::bind_vector<std::vector<nw::LevelUp>>(m, "LevelUpVector");
     nb::bind_vector<std::vector<nw::Resref>>(m, "ResrefVector");
-    nb::bind_vector<std::vector<nw::Resource>>(m, "ResourceVector");
     nb::bind_vector<std::vector<nw::AreaTile>>(m, "AreaTileVector");
 
     nb::bind_vector<std::vector<nw::Area*>>(m, "AreaVector");

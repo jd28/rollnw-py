@@ -1,5 +1,6 @@
 import enum
 from . import IVector4 as IVector4, Vector2 as Vector2, Vector3 as Vector3, Vector4 as Vector4
+from pathlib import Path
 from typing import ClassVar, Iterator
 
 class MdlNodeFlags:
@@ -288,4 +289,4 @@ class Mdl:
     model: MdlModel
     def valid(self) -> bool: ...
     @staticmethod
-    def from_file(path) -> Mdl: ...
+    def from_file(path: str | Path) -> Mdl: ...

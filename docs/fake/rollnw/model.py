@@ -1,6 +1,7 @@
 import enum
 from enum import auto
 from typing import Tuple, List, ClassVar, Optional, Iterator
+from pathlib import Path
 
 from . import (
     IVector4,
@@ -421,6 +422,6 @@ class Mdl:
         pass
 
     @staticmethod
-    def from_file(path) -> 'Mdl':
+    def from_file(path: str | Path) -> 'Mdl':
         """Loads mdl file from file path"""
         pass

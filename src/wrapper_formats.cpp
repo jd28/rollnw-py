@@ -140,7 +140,7 @@ void init_formats_dialog(nb::module_& nw)
         .def("__getitem__", [](const nw::Dialog* self, size_t index) {
             return (self && index < self->starts.size()) ? self->starts[index] : nullptr;
         })
-        .def_static("from_file", [](const std::string& path) {
+        .def_static("from_file", [](const std::filesystem::path& path) {
             auto p = nw::expand_path(path);
             if (!std::filesystem::exists(path)) {
                 throw std::runtime_error(fmt::format("{} does not exist", path));
@@ -253,7 +253,7 @@ void init_formats_palette(nb::module_& nw)
             result->from_json(json);
             return result; })
 
-        .def_static("from_file", [](const std::string& path) -> nw::Palette* {
+        .def_static("from_file", [](const std::filesystem::path& path) -> nw::Palette* {
             auto p = nw::expand_path(path);
             if (!std::filesystem::exists(path)) {
                 throw std::runtime_error(fmt::format("file '{}' does not exist", path));
