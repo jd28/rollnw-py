@@ -1,6 +1,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![ci](https://github.com/jd28/rollnw-py/actions/workflows/ci.yml/badge.svg)](https://github.com/jd28/rollnw-py/actions?query=workflow%3Aci)
-[![Documentation Status](https://readthedocs.org/projects/rollnw-py/badge/?version=latest)](https://rollnw-py.readthedocs.io/en/latest/?badge=latest)
+[![Docs](https://readthedocs.org/projects/rollnwpy/badge/?version=latest)](https://rollnwpy.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/rollnw.svg)](https://badge.fury.io/py/rollnw)
 
 # rollnw.py
