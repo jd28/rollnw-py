@@ -11,7 +11,8 @@ This repository has bindings for the [rollnw](https://github.com/jd28/rollnw/) l
 
 ## Building
 
-The only thing that is required is that you a c++20 compiler, python>=3.10, and [nox](https://nox.thea.codes/en/stable/) installed.
+The only thing that is required is that you a c++20 compiler and python>=3.10 installed.
 
+    pip install -r requirements.txt
     git clone git@github.com:jd28/rollnw-py.git --recursive
     nox -s dev
