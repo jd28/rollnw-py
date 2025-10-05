@@ -18,7 +18,7 @@ test-requires = "pytest"
 
 [tool.cibuildwheel.windows.environment]
 CMAKE_GENERATOR="Ninja"
-NWN_ROOT="C:/a/rollnw-py/rollnw-py/nwn"
+NWN_ROOT="D:/a/rollnw-py/rollnw-py/nwn"
 
 [tool.cibuildwheel.macos]
 archs = "universal2"
