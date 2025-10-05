@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-14, ubuntu-22.04, windows-2019]
+        os: [macos-14, ubuntu-22.04, windows-2022]
     runs-on: ${{ matrix.os }}
     name: Build ${{ matrix.os }}
 
@@ -42,17 +42,17 @@ jobs:
           submodules: recursive
 
       - name: Get current date
-        if: matrix.os != 'windows-2019'
+        if: matrix.os != 'windows-2022'
         run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
       - name: Get current date
-        if: matrix.os == 'windows-2019'
+        if: matrix.os == 'windows-2022'
         run: |
           echo "DATE=$(Get-Date -Format yyyy-MM-dd)" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       # Windows dependencies
       - name: windows - install dependencies
-        if: matrix.os == 'windows-2019'
+        if: matrix.os == 'windows-2022'
         run: choco install sccache ninja -y
 
       # macOS Dependencies
@@ -87,7 +87,7 @@ jobs:
           ls -l ${{ github.workspace }}/nwn/
 
       - name: Set up MSVC
-        if: matrix.os == 'windows-2019'
+        if: matrix.os == 'windows-2022'
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
