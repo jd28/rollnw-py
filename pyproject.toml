@@ -11,9 +11,8 @@ dependencies = []
 
 [tool.cibuildwheel]
 build-frontend = "build"
-skip = "*-win32 *-manylinux_i686 pp* cp36-* cp37-* *-musllinux_*"
+skip = "*-win32 *-manylinux_i686 *-musllinux_*"
 build = "cp310-*"
-manylinux-x86_64-image = "manylinux_2_28"
 test-command = "pytest {project}/tests"
 test-requires = "pytest"
 
