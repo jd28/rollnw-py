@@ -99,7 +99,7 @@ jobs:
         shell: bash
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           path: wheelhouse/*.whl
           name: dist-${{ matrix.os }}
@@ -127,7 +127,7 @@ jobs:
       - name: Build sdist
         run: pipx run build --sdist
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: SDist
           path: dist/*.tar.gz
